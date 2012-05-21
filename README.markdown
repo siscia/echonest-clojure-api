@@ -55,3 +55,7 @@ How it's work
 To use the library in the best possible way is neccesary know the [API](http://developer.echonest.com/docs/v4/index.html), basic-query take two string and a dictionary, the first string rappresent the category you are looking for ([artist](http://developer.echonest.com/docs/v4/artist.html), [song](http://developer.echonest.com/docs/v4/song.html), [track](http://developer.echonest.com/docs/v4/track.html), [playlist](http://developer.echonest.com/docs/v4/playlist.html), [catalog](http://developer.echonest.com/docs/v4/catalog.html), [sandbox](http://developer.echonest.com/docs/v4/sandbox.html) and [oauth](http://developer.echonest.com/docs/v4/oauth.html)) the second string rappresent what field you are asking (in the case of song you could ask search, [profile](http://developer.echonest.com/docs/v4/song.html#profile), or identify), the dictionary is the parameter you are passing (for song/profille valid paramaters are id, tack_id, format, bucket and limit).
 
 Every request take the :query dictionary, is not necessary pass the api_key every single time.
+
+The function ```analyze-response``` take the response returned by ```basic-query```, if everthing worked fine it return a nice map with the info we was looking for, in case of every problems the function will throw an exception.
+
+For now the library works only in a **synchronous** way.
