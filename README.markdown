@@ -60,7 +60,7 @@ The function ```analyze-response``` take the response returned by ```basic-query
 
 The library is now work in an asynchronous way, if wait-response is set to false the function will send the request to an agent without blocking the flow of execution.
 ```clj
-echonest-api.core> (def ag (upload-song "/home/simo/Music/Misery - Maroon 5.mp3" :query {:filetype "mp3"} :wait-response false))
+echonest-api.core> (def ag (upload-song "/home/siscia/Music/Misery - Maroon 5.mp3" :query {:filetype "mp3"} :wait-response false))
 #'echonest-api.core/ag
 echonest-api.core> ag
 #<Agent@29ac0292: nil>
