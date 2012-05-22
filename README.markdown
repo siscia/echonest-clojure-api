@@ -58,7 +58,7 @@ Every request take the :query dictionary, is not necessary pass the api_key ever
 
 The function ```analyze-response``` take the response returned by ```basic-query```, if everthing worked fine it return a nice map with the info we was looking for, in case of every problems the function will throw an exception.
 
-The library is now work in an asynchronous way, fìif wait-response is set to false the function will send the request to an agent without blocking the flow of execution.
+The library is now work in an asynchronous way, if wait-response is set to false the function will send the request to an agent without blocking the flow of execution.
 ```clj
 echonest-api.core> (def ag (upload-song "/home/simo/Music/Misery - Maroon 5.mp3" :query {:filetype "mp3"} :wait-response false))
 #'echonest-api.core/ag
