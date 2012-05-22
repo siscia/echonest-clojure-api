@@ -1,4 +1,6 @@
 (ns echonest-api.core
+  ^{:doc "Library to access the echonest API"
+       :author "Simone Mosciatti"}
   (:require [http.async.client :as client])
   (:use [clojure.data.json :only [read-json]])
   (:import [java.io File]))

@@ -3,7 +3,7 @@
   (:use [clojure.data.json :only [read-json]])
   (:import [java.io File]))
 
-(def url-base "http://developer.echonest.com/api/v4/")
+(def url-base "http://developerx.echonest.com/api/v4/")
 
 (def #^{:dynamic true} *api-key* (atom "N6E4NIOVYMTHNDM8J"))
 
