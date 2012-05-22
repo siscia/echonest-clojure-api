@@ -1,9 +1,11 @@
 (ns echonest-api.core
+  ^{:doc "Library to access the echonest API"
+       :author "Simone Mosciatti"}
   (:require [http.async.client :as client])
   (:use [clojure.data.json :only [read-json]])
   (:import [java.io File]))
 
-(def url-base "http://developerx.echonest.com/api/v4/")
+(def url-base "http://developer.echonest.com/api/v4/")
 
 (def #^{:dynamic true} *api-key* (atom "N6E4NIOVYMTHNDM8J"))
 
