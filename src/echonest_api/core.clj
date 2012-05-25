@@ -45,7 +45,11 @@
           #(let [url (str url-base "track/upload?")
                 queri (conj {"api_key" *api-key*} query)]
             (with-open [client (client/create-client)]
-              (let [response (client/POST client url :query queri :body (File. path-to-song) :headers {"Content-Type" "application/octet-stream"} :timeout -1)]
+              (let [response (client/POST client url
+                                          :query queri
+                                          :body (File. path-to-song)
+                                          :headers {"Content-Type" "application/octet-stream"}
+                                          :timeout -1)]
                 (client/await response))))]
     (if wait-response
       (inner)
@@ -56,7 +60,10 @@
   [url & {:keys [query body headers wait-response] :or {wait-response *wait-response*}}]
   (let [inner
           #(with-open [client (client/create-client)]
-            (let [response (client/POST client url :query query :body body :headers headers)]
+             (let [response (client/POST client url
+                                         :query query
+                                         :body body
+                                         :headers headers)]
               (client/await response)))]
     (if wait-response
       (inner)
