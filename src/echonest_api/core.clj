@@ -7,15 +7,15 @@
 
 (def url-base "http://developer.echonest.com/api/v4/")
 
-(def #^{:dynamic true} *api-key* (atom "N6E4NIOVYMTHNDM8J"))
+(def #^{:dynamic true} *api-key* "N6E4NIOVYMTHNDM8J")
 
 (defn set-api-key! [new-api]
-  (reset! *api-key* new-api))
+  (alter-var-root (var *api-key*) (fn [_] new-api)))
 
-(def #^{:dynamic true} *wait-response* (atom true))
+(def #^{:dynamic true} *wait-response* true)
 
 (defn set-wait-policy! [bool]
-  (reset! *wait-response* bool))
+  (alter-var-root (var *wait-response*) (fn [_] bool)))
 
 (defn analyze-response
   ;;TODO throw different exception for the two different case
