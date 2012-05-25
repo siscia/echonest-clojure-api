@@ -28,7 +28,7 @@
       body
       (throw (Exception. (str "Error #: " code-echo ": " (-> body :response :status :message)))))))
 
-(defn basic-query ;;TODO maybe i don't want to wait for the response...
+(defn basic-query
   [category paramaters & {:keys [query wait-response] :or {wait-response @*wait-response*}}]
   (letfn [(inner [_]
             (let [url (str url-base category "/" paramaters "?")
