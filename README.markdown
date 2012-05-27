@@ -13,7 +13,7 @@ By using lein just add at your dependencies:
 ```clj
 (defproject my-project "1.0.0"
   :dependencies [[org.clojure/clojure "1.2.1"]
-				 [echonest-api "0.0.1"]])
+				 [echonest-api "0.0.2"]])
 ```
 
 Code Example
@@ -58,17 +58,15 @@ Every request take the :query dictionary, is not necessary pass the api_key ever
 
 The function ```analyze-response``` take the response returned by ```basic-query```, if everthing worked fine it return a nice map with the info we was looking for, in case of every problems the function will throw an exception.
 
-The library is now work in an asynchronous way, if wait-response is set to false the function will send the request to an agent without blocking the flow of execution.
+The library is now work in an asynchronous way, if wait-response is set to false the function will return a promise.
 ```clj
-echonest-api.core> (def ag (upload-song "/home/siscia/Music/Misery - Maroon 5.mp3" :query {:filetype "mp3"} :wait-response false))
-#'echonest-api.core/ag
-echonest-api.core> ag
-#<Agent@29ac0292: nil>
-echonest-api.core> (println "The flow of execution is not stuncked waiting for the answer of the server")
-The flow of execution is not stuncked waiting for the answer of the server
+echonest-api.core> (def song (upload-song "/home/simo/Music/Won't go home without you - Maroon 5.mp3" :query {:filetype "mp3"} :wait-response false))
+#'echonest-api.core/song
+echonest-api.core> song
+#<core$future_call$reify__5684@5b9a82ee: :pending>
+echonest-api.core> (println "The flow of execution is free to do something else")
+The flow of execution is free to do something else
 nil
-echonest-api.core> (do 
-                    (await ag) ;;Now im waiting that the server answer
-                    (analyze-response @ag))
-{:response {:status {:version "4.2", :code 0, :message "Success"}, :track {:status "complete", :audio_md5 "801f8194b902bf25fb43b919ef99b399", :artist "Maroon 5", :artist_id "ARF5M7Q1187FB501E8", :samplerate 44100, :title "Misery", :analyzer_version "3.1.0_beta_5", :bitrate 128, :release "", :song_id "SOKGFEN136070739A2", :id "TRXZEVH134CE9F8E92", :md5 "4b04701801da3df1b619d356a3eb8da0"}}}
+echonest-api.core> (analyze-response @song) ;;Now i am waiting to get my answer
+{:response {:status {:version "4.2", :code 0, :message "Success"}, :track {:status "complete", :audio_md5 "a8a7db8491e576451e5a9f7143f55bd3", :artist "Maroon 5", :artist_id "ARF5M7Q1187FB501E8", :samplerate 44100, :title "Won't Go Home Without You", :analyzer_version "3.1.0_beta_5", :bitrate 199, :release "It Won't Be Soon Before Long", :song_id "SOEVAJI135A660B120", :id "TRZUXPX1378F324198", :md5 "789032754d8fa0d3d03ce4cb28af9e9e"}}
 ```
