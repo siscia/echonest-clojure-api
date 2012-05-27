@@ -1,4 +1,4 @@
-(defproject echonest-api "0.0.1"
+(defproject echonest-api "0.0.2"
   :description "Clojure library to acces the echonest API http://developer.echonest.com/"
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/data.json "0.1.2"]

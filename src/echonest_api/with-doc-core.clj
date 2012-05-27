@@ -13,15 +13,15 @@
 
 (def url-base "http://developer.echonest.com/api/v4/")
 
-(def #^{:dynamic true} *api-key* (atom "N6E4NIOVYMTHNDM8J"))
+(def #^{:dynamic true} *api-key* "N6E4NIOVYMTHNDM8J")
 
 (defn set-api-key! [new-api]
-  (reset! *api-key* new-api))
+  (alter-var-root (var *api-key*) (fn [_] new-api)))
 
-(def #^{:dynamic true} *wait-response* (atom true))
+(def #^{:dynamic true} *wait-response* true)
 
 (defn set-wait-policy! [bool]
-  (reset! *wait-response* bool))
+  (alter-var-root (var *wait-response*) (fn [_] bool)))
 
 (defn analyze-response
   "The function simply analyze the response by the echo-nest server throwing simply exception in case of 404, or in case of bad request.
@@ -54,63 +54,66 @@ In the other case is simply a bad request, check again the echonest documentatio
 (defn basic-query ;;TODO maybe i don't want to wait for the response...
   "Basic function for all the GET request, it takes two string and one (is not really an option) map, the first string rappresent the category you are looking for, for instance, \"artist\" or \"song\", the second string rappresent what in that determinate category what you are looking for, for instance \"blogs\" or \"images\", the map get all the other parameter, like the name of the artist or the title of the song. If so i want to find the twitter account of rihanna i will do something like this (search \"artist\" \"twitter\" {:name \"rihanna\"})
 This function return a map of promises, not very usefull, suggest to simply call (analyze-response (search \"artist\" \"images\" {:name \"shakira\"})) to get a map of interesting link..."
-  [category paramaters & {:keys [query wait-response] :or {wait-response @*wait-response*}}]
-  (letfn [(inner [_]
-            (let [url (str url-base category "/" paramaters "?") ;;Put
-                  ;;together the url in a very easy way
-                  query (conj {"api_key" @*api-key*} query) ;;Make a
-                  ;;map of the various paramater for the request
-                  ;;includin the api-key
-                  ]
-              (with-open [client (client/create-client)]
-                (let [response (client/GET client url :query query)]
-                  (client/await response)))))]
+  [category paramaters & {:keys [query wait-response] :or {wait-response *wait-response*}}]
+  (let [inner
+        #(let [url (str url-base category "/" paramaters "?")
+              query (conj {"api_key" *api-key*} query)]
+          (with-open [client (client/create-client)]
+            (let [response (client/GET client url :query query)]
+              (client/await response))))]
     (if wait-response
-      (inner nil)
-      (send (agent nil) inner))))
+      (inner)
+      (future-call inner))))
 
-(defn upload-song [path-to-song & {:keys [query wait-response] :or {wait-response @*wait-response*}}]
-  (letfn [(inner [_]
-            (let [url (str url-base "track/upload?")
-                queri (conj {"api_key" @*api-key*} query)]
-              (with-open [client (client/create-client)]
-                (let [response (client/POST client url :query queri :body (File. path-to-song) :headers {"Content-Type" "application/octet-stream"} :timeout -1)]
-                  (client/await response)))))]
+(defn upload-song [path-to-song & {:keys [query wait-response] :or {wait-response *wait-response*}}]
+  (let [inner
+          #(let [url (str url-base "track/upload?")
+                queri (conj {"api_key" *api-key*} query)]
+            (with-open [client (client/create-client)]
+              (let [response (client/POST client url
+                                          :query queri
+                                          :body (File. path-to-song)
+                                          :headers {"Content-Type" "application/octet-stream"}
+                                          :timeout -1)]
+                (client/await response))))]
     (if wait-response
-      (inner nil)
-      (send (agent nil) inner))))
+      (inner)
+      (future-call inner))))
 
 (defn- POST-REQUEST
   "Utility to send a generic POST request DO NOT wait for the realization of the response"
-  [url & {:keys [query body headers wait-response] :or {wait-response @*wait-response*}}]
-  (letfn [(inner [_]
-            (with-open [client (client/create-client)]
-              (let [response (client/POST client url :query query :body body :headers headers)]
-                (client/await response))))]
+  [url & {:keys [query body headers wait-response] :or {wait-response *wait-response*}}]
+  (let [inner
+          #(with-open [client (client/create-client)]
+             (let [response (client/POST client url
+                                         :query query
+                                         :body body
+                                         :headers headers)]
+              (client/await response)))]
     (if wait-response
-      (inner nil)
-      (send (agent nil) inner))))
+      (inner)
+      (future-call inner))))
 
-(defn analyze-track [{:keys [query wait-response] :or {wait-response @*wait-response*}}]
+(defn analyze-track [{:keys [query wait-response] :or {wait-response *wait-response*}}]
   (POST-REQUEST (str url-base "track/analyze?")
-                :query (conj {"api_key" @*api-key*} query)
+                :query (conj {"api_key" *api-key*} query)
                 :headers {"Content-Type" "multipart/form-data"}
                 :wait-response wait-response))
 
 (defn create-catalog [name type & {:keys [query wait-response]}]
   (POST-REQUEST (str url-base "catalog/create")
-                :query (conj query {:name name :type type :api_key @*api-key*})
+                :query (conj query {:name name :type type :api_key *api-key*})
                 :headers {"Content-Type" "multipart/form-data"} :wait-response wait-response))
 
 (defn update-catalog [id data & {:keys [query wait-response]}]
   "Easiest way data = (slurp \"path/of/the/json.json\") "
   (POST-REQUEST (str url-base "catalog/update")
-                :body {:id id :api_key @*api-key* :data data}
+                :body {:id id :api_key *api-key* :data data}
                 :query query
                 :wait-response wait-response))
 
 (defn delete-catalog [id & {:keys [query wait-response]}]
   (POST-REQUEST (str url-base "catalog/delete")
-                :body {:id id :api_key @*api-key*}
+                :body {:id id :api_key *api-key*}
                 :query query
                 :wait-response wait-response))
