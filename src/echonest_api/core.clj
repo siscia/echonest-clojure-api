@@ -47,7 +47,9 @@
             (with-open [client (client/create-client)]
               (let [response (client/POST client url
                                           :query queri
-                                          :body (File. path-to-song)
+                                          :body (cond
+                                                 (string? path-to-song) (File. path-to-song)
+                                                 (.isFile path-to-song) path-to-song)
                                           :headers {"Content-Type" "application/octet-stream"}
                                           :timeout -1)]
                 (client/await response))))]
